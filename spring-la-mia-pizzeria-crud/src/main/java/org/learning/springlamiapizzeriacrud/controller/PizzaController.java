@@ -77,6 +77,7 @@ public class PizzaController {
             if (bindingResult.hasErrors()) {
                 return "/pizze/edit";
             }
+            formPizza.setUrl(pizzaToEdit.getUrl());
             Pizza savedPizza = pizzaRepository.save(formPizza);
             return "redirect:/pizze/show/{id}";
 
