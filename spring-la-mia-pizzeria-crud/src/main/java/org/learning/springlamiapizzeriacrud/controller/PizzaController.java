@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.awt.print.Book;
 import java.util.List;
@@ -84,7 +85,23 @@ public class PizzaController {
         }
 
         else{
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Book with id " + id + " not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Pizza with id " + id + " not found");
+        }
+    }
+    @PostMapping("/delete/{id}")
+    public String delete(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+        // verifico se il Book è presente su db
+        Optional<Pizza> result = pizzaRepository.findById(id);
+        if (result.isPresent()) {
+            // se c'è lo cancello
+            pizzaRepository.deleteById(id);
+            // mando un messaggio di successo con la redirect
+            redirectAttributes.addFlashAttribute("redirectMessage",
+                    "Book " + result.get().getName() + " deleted!");
+            return "redirect:/pizze";
+        } else {
+            // se non c'è sollevo un'eccezione
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Pizza with di " + id + " not found");
         }
     }
 
